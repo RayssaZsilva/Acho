@@ -1,0 +1,51 @@
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 48px;
+}
+
+nav {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 48px;
+}
+
+nav {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+nav a {
+  text-decoration: none;
+  color: #333;
+  font-weight: 600;
+  transition: .3s;
+
+}
+
+nav a:hover{
+   color:#2563eb;
+
+}
+
+nav button {
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor:pointer;
+  transition: .3s;
+  color:white;
+  background: hsl(221, 86%, 77%);
+}
+
+nav button:hover {
+    background:rgb(35, 85, 129);
+}
+

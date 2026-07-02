@@ -5,8 +5,8 @@ function Header() {
             <h1>StayFinder</h1>
             
             <nav>
-                <a href="#">Explorar</a> 
-                <a href="#">Favoritos</a>
+                <a href=" ">Explorar</a> 
+                <a href=" ">Favoritos</a>
                 <button>Entrar</button>
                 </nav>
             

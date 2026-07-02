@@ -1,10 +1,42 @@
 import SearchBar from "../../components/common/SearchBar";
 import HotelCard from "../../components/hotel/HotelCard";
-import hotel1 from "../../assets/img/hotel1.jfif";
-import  hotel2 from "../../assets/img/hotel2.jfif";
+import hotel1 from "../../assets/img/hotel1.jpg";
+import hotel2 from "../../assets/img/hotel2.jpg";
 import "./Home.css";
+import "../../components/layout/header.css"
+
 
 function  Home () {
+      const hotels = [
+                {
+                    id: 1,
+                    nome: "Resort",
+                    cidade: "SP",
+                    avaliacao: 4.8,
+                    preco: 1200,
+                    imagem: hotel1,
+                },
+
+            {
+                id: 2,
+                nome: "Pousada Cerra",
+                cidade: "Monte verde",
+                avaliacao: 4.7,
+                preco: 1000,
+                imagem: hotel2,
+
+            } ,
+
+            {
+              id: 3,
+                nome: "Pousada",
+                cidade: "Monte",
+                avaliacao: 4.7,
+                preco: 1000,
+                imagem: hotel2,
+            
+            },
+        ];
 
     return(
     <main>
@@ -21,24 +53,20 @@ function  Home () {
         <section>
             <h3>Proximos de você:... </h3>
 
-         <div className="hotel-list">  
-            <HotelCard
-                nome="interior de são paulo"
-                cidade="São Paulo"
-                imagem={hotel1}
-                avaliacao={4.8}
-                preco={1200}
-            />
 
-            <HotelCard
-                nome="Piscina aquecida"
-                cidade="MG"
-                imagem={hotel2}
-                avaliacao={4.8}
-                preco={1200}
-            />
-        </div> 
-
+        <div className="hotel-list">
+    {hotels.map((hotel)=>(
+        <HotelCard
+        key={hotel.id}
+        nome={hotel.nome}
+        cidade={hotel.cidade}
+        imagem={hotel.imagem}
+        avaliacao={hotel.avaliacao}
+        preco={hotel.preco}
+        />
+        
+    ))}  
+    </div>   
         </section>
 
         <section>

@@ -1,32 +1,31 @@
-import "./HotelCard.css"
+import "./HotelCard.css";
 
-interface HotelCardProps {
-    nome:string;
-    cidade:string;
-    imagem: string;
-    avaliacao: number;
-    preco:number;
-}
-function HotelCard ({ nome, cidade, imagem, avaliacao, preco }: HotelCardProps) {
-    return(
-        <article>
+type HotelCardProps = {
+  nome: string;
+  cidade: string;
+  imagem: string;
+  avaliacao: number;
+  preco: number;
+};
 
-            <img src={imagem} alt={nome} />
+function HotelCard({
+  nome,
+  cidade,
+  imagem,
+  avaliacao,
+  preco,
+  }: 
 
-        <div>
-
-            <h3>{nome}</h3>
-            <p>{cidade}</p>
-            <p>★ : {avaliacao}</p>
-            <p>R$ {preco.toFixed(2)} / noite</p>
-
-            <button>Ver detalhes</button>
-            
-            </div>
-
-        </article>
-    )
-
+HotelCardProps) {
+  return (
+    <div className="hotel-card">
+      <img src={imagem} alt={nome} />
+      <h3>{nome}</h3>
+      <p>{cidade}</p>
+      <p>★ {avaliacao}</p>
+      <p>R$ {preco}</p>
+    </div>
+  );
 }
 
 export default HotelCard;
