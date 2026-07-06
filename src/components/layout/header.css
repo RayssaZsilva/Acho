@@ -41,7 +41,7 @@ nav button {
   border-radius: 8px;
   cursor:pointer;
   transition: .3s;
-  color:white;
+  color:rgb(14, 7, 7);
   background: hsl(221, 86%, 77%);
 }
 

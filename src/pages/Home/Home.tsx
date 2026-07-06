@@ -58,11 +58,13 @@ function  Home () {
     {hotels.map((hotel)=>(
         <HotelCard
         key={hotel.id}
+        id={hotel.id}
         nome={hotel.nome}
         cidade={hotel.cidade}
         imagem={hotel.imagem}
         avaliacao={hotel.avaliacao}
         preco={hotel.preco}
+
         />
         
     ))}  
