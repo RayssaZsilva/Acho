@@ -8,8 +8,8 @@ type HotelCardProps = {
   imagem: string;
   avaliacao: number;
   preco: number;
-  checkin: string;
-  checkout: string;
+  checkin?: string;
+  checkout?: string;
 };
 
 function HotelCard({
@@ -27,18 +27,20 @@ function HotelCard({
   function verDetalhes() {
     const logado = localStorage.getItem("isLogged");
 
-    if (logado === "true") {
-      const params = new URLSearchParams({
-        checkin,
-        checkout,
-      });
-
-      navigate(`/hotel/${id}?${params.toString()}`);
-    } else {
-      navigate("/login");
+    if (logado !== "true") {
+      navigate("/.login");
+      return;
     }
+      if (checkin && checkout) {
+        const params = new URLSearchParams({
+          checkin,
+          checkout,
+        });
+        navigate(`/hotel/${id}?${params.toString()}`);
+  } else {
+    navigate(`/hotel/${id}`);
   }
-
+      }
   return (
     <div className="hotel-card">
       <img src={imagem} alt={nome} />

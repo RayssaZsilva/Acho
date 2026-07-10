@@ -10,27 +10,33 @@ export async function buscarHoteis(
   destId: string,
   destType: string,
   checkin: string,
-  checkout: string
+  checkout: string,
+  adultos: number,
+  criancas: number,
+  quartos: number
 ) {
-  const params = new URLSearchParams({
-    children_ages: "5,0",
-    adults_number: "2",
-    categories_filter_ids:
-      "class::2,class::4,free_cancellation::1",
-    page_number: "0",
-    dest_type: destType,
-    children_number: "2",
-    order_by: "popularity",
-    filter_by_currency: "BRL",
-    room_number: "1",
-    units: "metric",
-    checkin_date: checkin,
-    dest_id: destId,
-    locale: "pt-br",
-    checkout_date: checkout,
-    include_adjacency: "true",
-  });
+ const params = new URLSearchParams({
+  adults_number: String(adultos),
+  room_number: String(quartos),
+  page_number: "0",
+  dest_type: destType,
+  order_by: "popularity",
+  filter_by_currency: "BRL",
+  units: "metric",
+  checkin_date: checkin,
+  checkout_date: checkout,
+  dest_id: destId,
+  locale: "pt-br",
+  include_adjacency: "true",
+});
 
+if (criancas > 0) {
+  params.append("children_number", String(criancas));
+  params.append(
+    "children_ages",
+    Array(criancas).fill(5).join(",")
+  );
+}
   const url =
     `https://booking-com.p.rapidapi.com/v2/hotels/search?${params}`;
 

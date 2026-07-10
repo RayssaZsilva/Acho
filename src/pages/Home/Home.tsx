@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SearchBar from "../../components/common/SearchBar";
 import HotelCard from "../../components/hotel/HotelCard";
 import {
@@ -18,7 +18,10 @@ function Home() {
   async function pesquisarCidade(
   nomeCidade: string,
   checkin: string,
-  checkout: string
+  checkout: string,
+   adultos: number,
+  criancas: number,
+  quartos: number
 ) {
   try {
     setCarregando(true);
@@ -40,7 +43,10 @@ function Home() {
       localEscolhido.dest_id,
       localEscolhido.dest_type,
       checkin,
-      checkout
+      checkout,
+       adultos,
+       criancas,
+       quartos
     );
 
     const resultados = Array.isArray(dados?.results)
@@ -70,6 +76,17 @@ function Home() {
     setCarregando(false);
   }
 }
+
+useEffect(() =>{
+  pesquisarCidade(
+    "São Paulo",
+    "2026-07-18",
+    "2026-07-20",
+    2,
+    0,
+    1
+  );
+}, []);
 
   return (
     <main>
