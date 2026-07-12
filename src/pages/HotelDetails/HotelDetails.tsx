@@ -1,13 +1,23 @@
 import { useEffect, useState } from "react";
-import { useParams, useSearchParams } from "react-router-dom";
-import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
+import {
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
+
+import {
+  MapContainer,
+  Marker,
+  Popup,
+  TileLayer,
+} from "react-leaflet";
+
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 
 import {
-  buscarDetalhesHotel,
-  buscarFotosHotel,
-} from "../../services/hotelService";
+  buscarHotelPorId,
+  type HotelLocal,
+} from "../../services/HotelServiceLocal";
 
 import "./HotelDetails.css";
 
@@ -31,75 +41,78 @@ function HotelDetails() {
   const checkin = searchParams.get("checkin");
   const checkout = searchParams.get("checkout");
 
-  const [hotel, setHotel] = useState<any>(null);
-  const [fotos, setFotos] = useState<any[]>([]);
-  const [favoritado, setFavoritado] = useState(false);
+  const [hotel, setHotel] =
+    useState<HotelLocal | null>(null);
+
+  const [favoritado, setFavoritado] =
+    useState(false);
+
   const [erro, setErro] = useState("");
 
   useEffect(() => {
     async function carregarHotel() {
-      if (!id || !checkin || !checkout) {
-        setErro("As datas da reserva não foram informadas.");
+      if (!id) {
+        setErro("Hotel não encontrado.");
         return;
       }
 
       try {
         setErro("");
 
-        const dados = await buscarDetalhesHotel(
-          id,
-          checkin,
-          checkout
+        const dados = await buscarHotelPorId(
+          Number(id)
         );
 
-        const fotosHotel = await buscarFotosHotel(id);
+        if (!dados) {
+          setErro("Hotel não encontrado.");
+          return;
+        }
 
         setHotel(dados);
-        setFotos(fotosHotel);
 
         const favoritosSalvos = JSON.parse(
           localStorage.getItem("favoritos") || "[]"
         );
 
         const jaExiste = favoritosSalvos.some(
-          (item: any) => item.id === dados.hotel_id
+          (item: any) => item.id === dados.id
         );
 
         setFavoritado(jaExiste);
       } catch (error) {
-        console.error("Erro ao carregar hotel:", error);
-        setErro("Não foi possível carregar os detalhes do hotel.");
+        console.error(
+          "Erro ao carregar hotel:",
+          error
+        );
+
+        setErro(
+          "Não foi possível carregar os detalhes."
+        );
       }
     }
 
     carregarHotel();
-  }, [id, checkin, checkout]);
-
-  function pegarUrlFoto(foto: any) {
-    return (
-      foto?.url_original ||
-      foto?.url_1440 ||
-      foto?.url_max750 ||
-      foto?.url_max500 ||
-      foto?.url_max300 ||
-      foto?.url_square60 ||
-      ""
-    );
-  }
+  }, [id]);
 
   function formatarData(data: string | null) {
     if (!data) {
       return "Data não informada";
     }
 
-    return new Date(`${data}T12:00:00`).toLocaleDateString(
-      "pt-BR",
-      {
-        day: "2-digit",
-        month: "long",
-        year: "numeric",
-      }
-    );
+    return new Date(
+      `${data}T12:00:00`
+    ).toLocaleDateString("pt-BR", {
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
+    });
+  }
+
+  function formatarPreco(preco: number) {
+    return preco.toLocaleString("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    });
   }
 
   function salvarFavorito() {
@@ -110,12 +123,12 @@ function HotelDetails() {
     );
 
     const jaExiste = favoritosSalvos.some(
-      (item: any) => item.id === hotel.hotel_id
+      (item: any) => item.id === hotel.id
     );
 
     if (jaExiste) {
       const atualizados = favoritosSalvos.filter(
-        (item: any) => item.id !== hotel.hotel_id
+        (item: any) => item.id !== hotel.id
       );
 
       localStorage.setItem(
@@ -128,20 +141,14 @@ function HotelDetails() {
     }
 
     const novoFavorito = {
-      id: hotel.hotel_id,
-      nome: hotel.hotel_name,
-      cidade: hotel.city_trans || hotel.city,
-      imagem: pegarUrlFoto(fotos[0]),
-      avaliacao:
-        hotel.review_score ??
-        hotel.breakfast_review_score?.rating ??
-        0,
-      preco:
-        hotel.composite_price_breakdown?.gross_amount_per_night
-          ?.value ?? 0,
-      url: hotel.url,
-      checkin,
-      checkout,
+      id: hotel.id,
+      nome: hotel.nome,
+      cidade: `${hotel.cidade} - ${hotel.estado}`,
+      imagem: hotel.imagem,
+      avaliacao: hotel.avaliacao,
+      preco: hotel.preco,
+      checkin: checkin ?? "",
+      checkout: checkout ?? "",
     };
 
     localStorage.setItem(
@@ -163,18 +170,27 @@ function HotelDetails() {
     return <h2>Carregando...</h2>;
   }
 
+  const fotoPrincipal =
+    hotel.galeria?.[0] || hotel.imagem;
+
+  const segundaFoto =
+    hotel.galeria?.[1] || hotel.imagem;
+
+  const terceiraFoto =
+    hotel.galeria?.[2] || hotel.imagem;
+
   return (
     <main className="hotel-details-page">
       <section className="hotel-details-header">
         <div>
           <span className="hotel-type">
-            {hotel.accommodation_type_name || "Hospedagem"}
+            Hospedagem
           </span>
 
-          <h1>{hotel.hotel_name}</h1>
+          <h1>{hotel.nome}</h1>
 
           <p className="hotel-address">
-            📍 {hotel.hotel_address_line}
+            📍 {hotel.cidade} - {hotel.estado}
           </p>
         </div>
 
@@ -189,37 +205,25 @@ function HotelDetails() {
 
       <section className="hotel-gallery-placeholder">
         <div className="gallery-main">
-          {pegarUrlFoto(fotos[0]) ? (
-            <img
-              src={pegarUrlFoto(fotos[0])}
-              alt={hotel.hotel_name}
-            />
-          ) : (
-            <span>Foto principal do hotel</span>
-          )}
+          <img
+            src={fotoPrincipal}
+            alt={hotel.nome}
+          />
         </div>
 
         <div className="gallery-small">
           <div>
-            {pegarUrlFoto(fotos[1]) ? (
-              <img
-                src={pegarUrlFoto(fotos[1])}
-                alt={`${hotel.hotel_name} 2`}
-              />
-            ) : (
-              <span>Foto</span>
-            )}
+            <img
+              src={segundaFoto}
+              alt={`${hotel.nome} 2`}
+            />
           </div>
 
           <div>
-            {pegarUrlFoto(fotos[2]) ? (
-              <img
-                src={pegarUrlFoto(fotos[2])}
-                alt={`${hotel.hotel_name} 3`}
-              />
-            ) : (
-              <span>Foto</span>
-            )}
+            <img
+              src={terceiraFoto}
+              alt={`${hotel.nome} 3`}
+            />
           </div>
         </div>
       </section>
@@ -229,24 +233,19 @@ function HotelDetails() {
           <div className="info-card">
             <h2>Sobre esta hospedagem</h2>
 
-            <p>
-              Localizada em {hotel.city_trans || hotel.city},
-              esta hospedagem oferece uma experiência confortável
-              para sua viagem.
-            </p>
+            <p>{hotel.descricao}</p>
           </div>
 
           <div className="info-card">
             <h2>Comodidades principais</h2>
 
             <ul className="facilities-list">
-              {hotel.facilities_block?.facilities?.map(
-                (
-                  facility: { name: string },
-                  index: number
-                ) => (
-                  <li key={`${facility.name}-${index}`}>
-                    ✓ {facility.name}
+              {hotel.comodidades.map(
+                (comodidade, index) => (
+                  <li
+                    key={`${comodidade}-${index}`}
+                  >
+                    ✓ {comodidade}
                   </li>
                 )
               )}
@@ -258,22 +257,24 @@ function HotelDetails() {
 
             <div className="reviews-grid">
               <div>
-                <strong>{hotel.review_nr ?? 0}</strong>
-                <span>avaliações</span>
+                <strong>{hotel.avaliacao}</strong>
+                <span>nota geral</span>
               </div>
 
               <div>
                 <strong>
-                  {hotel.wifi_review_score?.rating ?? "—"}
+                  {hotel.avaliacao >= 9
+                    ? "Excelente"
+                    : "Muito bom"}
                 </strong>
-                <span>Wi-Fi</span>
+                <span>experiência</span>
               </div>
 
               <div>
                 <strong>
-                  {hotel.breakfast_review_score?.rating ?? "—"}
+                  {hotel.comodidades.length}
                 </strong>
-                <span>café da manhã</span>
+                <span>comodidades</span>
               </div>
             </div>
           </div>
@@ -282,12 +283,7 @@ function HotelDetails() {
         <aside className="booking-card">
           <span>Diária a partir de</span>
 
-          <h2>
-            {hotel.composite_price_breakdown
-              ?.gross_amount_per_night?.value
-              ? `${hotel.currency_code} ${hotel.composite_price_breakdown.gross_amount_per_night.value}`
-              : "Consulte o preço"}
-          </h2>
+          <h2>{formatarPreco(hotel.preco)}</h2>
 
           <p>Datas selecionadas:</p>
 
@@ -301,7 +297,8 @@ function HotelDetails() {
           </button>
 
           <small>
-            Você não será cobrada nesta etapa.
+            Projeto demonstrativo. Nenhuma cobrança
+            será realizada.
           </small>
         </aside>
       </section>
@@ -310,41 +307,37 @@ function HotelDetails() {
         <h2>Localização</h2>
 
         <p className="map-address">
-          📍 {hotel.hotel_address_line}
+          📍 {hotel.cidade} - {hotel.estado}
         </p>
 
-        {hotel.latitude && hotel.longitude ? (
-          <MapContainer
-            center={[
-              Number(hotel.latitude),
-              Number(hotel.longitude),
-            ]}
-            zoom={15}
-            scrollWheelZoom={false}
-            className="hotel-map"
-          >
-            <TileLayer
-              attribution="&copy; OpenStreetMap contributors"
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            />
+        <MapContainer
+          center={[
+            hotel.latitude,
+            hotel.longitude,
+          ]}
+          zoom={15}
+          scrollWheelZoom={false}
+          className="hotel-map"
+        >
+          <TileLayer
+            attribution="&copy; OpenStreetMap contributors"
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          />
 
-            <Marker
-              position={[
-                Number(hotel.latitude),
-                Number(hotel.longitude),
-              ]}
-              icon={marcadorHotel}
-            >
-              <Popup>
-                <strong>{hotel.hotel_name}</strong>
-                <br />
-                {hotel.hotel_address_line}
-              </Popup>
-            </Marker>
-          </MapContainer>
-        ) : (
-          <p>Localização não disponível.</p>
-        )}
+          <Marker
+            position={[
+              hotel.latitude,
+              hotel.longitude,
+            ]}
+            icon={marcadorHotel}
+          >
+            <Popup>
+              <strong>{hotel.nome}</strong>
+              <br />
+              {hotel.cidade} - {hotel.estado}
+            </Popup>
+          </Marker>
+        </MapContainer>
       </section>
     </main>
   );

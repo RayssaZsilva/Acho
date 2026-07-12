@@ -1,0 +1,72 @@
+[
+  {
+    "id": 1,
+    "nome": "Stay Paulista Hotel",
+    "cidade": "São Paulo",
+    "estado": "SP",
+    "preco": 389.9,
+    "avaliacao": 9.1,
+    "imagem": "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=900",
+    "galeria": [
+      "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1200",
+      "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=1200",
+      "https://images.unsplash.com/photo-1590490360182-c33d57733427?w=1200"
+    ],
+    "descricao": "Hospedagem moderna próxima à Avenida Paulista, com quartos confortáveis e fácil acesso ao transporte público.",
+    "comodidades": [
+      "Wi-Fi gratuito",
+      "Café da manhã",
+      "Academia",
+      "Recepção 24 horas"
+    ],
+    "latitude": -23.5614,
+    "longitude": -46.6559
+  },
+  {
+    "id": 2,
+    "nome": "Urban Garden São Paulo",
+    "cidade": "São Paulo",
+    "estado": "SP",
+    "preco": 279.9,
+    "avaliacao": 8.7,
+    "imagem": "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=900",
+    "galeria": [
+      "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=1200",
+      "https://images.unsplash.com/photo-1564501049412-61c2a3083791?w=1200",
+      "https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=1200"
+    ],
+    "descricao": "Hotel urbano com ambiente acolhedor, ideal para viagens de trabalho ou lazer.",
+    "comodidades": [
+      "Wi-Fi gratuito",
+      "Estacionamento",
+      "Restaurante",
+      "Ar-condicionado"
+    ],
+    "latitude": -23.5505,
+    "longitude": -46.6333
+  },
+  {
+    "id": 3,
+    "nome": "Vila Madalena Boutique",
+    "cidade": "São Paulo",
+    "estado": "SP",
+    "preco": 449.9,
+    "avaliacao": 9.3,
+    "imagem": "https://images.unsplash.com/photo-1568084680786-a84f91d1153c?w=900",
+    "galeria": [
+      "https://images.unsplash.com/photo-1568084680786-a84f91d1153c?w=1200",
+      "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?w=1200",
+      "https://images.unsplash.com/photo-1584132967334-10e028bd69f7?w=1200"
+    ],
+    "descricao": "Hotel boutique em uma das regiões mais conhecidas de São Paulo, com decoração contemporânea.",
+    "comodidades": [
+      "Piscina",
+      "Wi-Fi gratuito",
+      "Bar",
+      "Café da manhã",
+      "Serviço de quarto"
+    ],
+    "latitude": -23.5577,
+    "longitude": -46.6908
+  }
+]

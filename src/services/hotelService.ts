@@ -1,139 +1,71 @@
-const options = {
-  method: "GET",
-  headers: {
-    "X-RapidAPI-Key": import.meta.env.VITE_RAPIDAPI_KEY,
-    "X-RapidAPI-Host": import.meta.env.VITE_RAPIDAPI_HOST,
-  },
+import hotels from "../data/hotels";
+
+export type HotelLocal = {
+  id: number;
+  nome: string;
+  cidade: string;
+  estado: string;
+  preco: number;
+  avaliacao: number;
+  imagem: string;
+  galeria: string[];
+  descricao: string;
+  comodidades: string[];
+  latitude: number;
+  longitude: number;
+  url?: string;
 };
 
-export async function buscarHoteis(
-  destId: string,
-  destType: string,
-  checkin: string,
-  checkout: string,
-  adultos: number,
-  criancas: number,
-  quartos: number
-) {
- const params = new URLSearchParams({
-  adults_number: String(adultos),
-  room_number: String(quartos),
-  page_number: "0",
-  dest_type: destType,
-  order_by: "popularity",
-  filter_by_currency: "BRL",
-  units: "metric",
-  checkin_date: checkin,
-  checkout_date: checkout,
-  dest_id: destId,
-  locale: "pt-br",
-  include_adjacency: "true",
-});
+function normalizarTexto(texto: string) {
+  return texto
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .trim();
+}
 
-if (criancas > 0) {
-  params.append("children_number", String(criancas));
-  params.append(
-    "children_ages",
-    Array(criancas).fill(5).join(",")
+export async function buscarHoteis(
+  cidade: string = ""
+): Promise<HotelLocal[]> {
+  if (!cidade.trim()) {
+    return hotels as HotelLocal[];
+  }
+
+  const cidadeNormalizada = normalizarTexto(cidade);
+
+  return (hotels as HotelLocal[]).filter((hotel) => {
+    const cidadeHotel = normalizarTexto(hotel.cidade);
+    const estadoHotel = normalizarTexto(hotel.estado);
+    const nomeHotel = normalizarTexto(hotel.nome);
+
+    return (
+      cidadeHotel.includes(cidadeNormalizada) ||
+      estadoHotel.includes(cidadeNormalizada) ||
+      nomeHotel.includes(cidadeNormalizada)
+    );
+  });
+}
+
+export async function buscarHotelPorId(
+  id: number
+): Promise<HotelLocal | undefined> {
+  return (hotels as HotelLocal[]).find(
+    (hotel) => hotel.id === id
   );
 }
-  const url =
-    `https://booking-com.p.rapidapi.com/v2/hotels/search?${params}`;
 
-  const response = await fetch(url, options);
-
-  if (!response.ok) {
-    console.log("Status:", response.status);
-    console.log("Resposta:", await response.text());
-    throw new Error("Erro ao buscar hotéis");
-  }
-
-  return await response.json();
+export async function buscarMaisAvaliados(): Promise<
+  HotelLocal[]
+> {
+  return [...(hotels as HotelLocal[])]
+    .sort((a, b) => b.avaliacao - a.avaliacao)
+    .slice(0, 3);
 }
 
-export async function buscarDetalhesHotel(
-  hotelId: string,
-  checkin: string,
-  checkout: string
-) {
-  const params = new URLSearchParams({
-    hotel_id: hotelId,
-    checkin_date: checkin,
-    checkout_date: checkout,
-    currency: "BRL",
-    locale: "pt-br",
-  });
-
-  const url =
-    `https://booking-com.p.rapidapi.com/v2/hotels/details?${params}`;
-
-  const response = await fetch(url, options);
-
-  if (!response.ok) {
-    console.log("Status:", response.status);
-    console.log("Resposta:", await response.text());
-    throw new Error("Erro ao buscar detalhes do hotel");
-  }
-
-  return await response.json();
-}
-
-export async function buscarDescricaoHotel(hotelId: string) {
-  const params = new URLSearchParams({
-    hotel_id: hotelId,
-    locale: "pt-br",
-  });
-
-  const url =
-    `https://booking-com.p.rapidapi.com/v2/hotels/description?${params}`;
-
-  const response = await fetch(url, options);
-
-  if (!response.ok) {
-    console.log("Status:", response.status);
-    console.log("Resposta:", await response.text());
-    throw new Error("Erro ao buscar descrição do hotel");
-  }
-
-  return await response.json();
-}
-
-export async function buscarFotosHotel(hotelId: string) {
-  const params = new URLSearchParams({
-    hotel_id: hotelId,
-    locale: "pt-br",
-  });
-
-  const url =
-    `https://booking-com.p.rapidapi.com/v1/hotels/photos?${params}`;
-
-  const response = await fetch(url, options);
-
-  if (!response.ok) {
-    console.log("Status:", response.status);
-    console.log("Resposta:", await response.text());
-    throw new Error("Erro ao buscar fotos do hotel");
-  }
-
-  return await response.json();
-}
-
-export async function buscarLocal(nomeCidade: string) {
-  const params = new URLSearchParams({
-    name: nomeCidade,
-    locale: "pt-br",
-  });
-
-  const url =
-    `https://booking-com.p.rapidapi.com/v1/hotels/locations?${params}`;
-
-  const response = await fetch(url, options);
-
-  if (!response.ok) {
-    console.log("Status:", response.status);
-    console.log("Resposta:", await response.text());
-    throw new Error("Erro ao buscar cidade");
-  }
-
-  return await response.json();
+export async function buscarPromocoes(): Promise<
+  HotelLocal[]
+> {
+  return [...(hotels as HotelLocal[])]
+    .sort((a, b) => a.preco - b.preco)
+    .slice(0, 3);
 }

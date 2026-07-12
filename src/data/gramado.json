@@ -1,0 +1,74 @@
+[
+  {
+    "id": 7,
+    "nome": "Chalé Encanto de Gramado",
+    "cidade": "Gramado",
+    "estado": "RS",
+    "preco": 459.9,
+    "avaliacao": 9.6,
+    "imagem": "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=900",
+    "galeria": [
+      "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=1200",
+      "https://images.unsplash.com/photo-1601918774946-25832a4be0d6?w=1200",
+      "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=1200"
+    ],
+    "descricao": "Chalé aconchegante com clima romântico, ideal para aproveitar os dias frios de Gramado.",
+    "comodidades": [
+      "Lareira",
+      "Wi-Fi gratuito",
+      "Café da manhã",
+      "Estacionamento",
+      "Aquecimento"
+    ],
+    "latitude": -29.3788,
+    "longitude": -50.8721
+  },
+  {
+    "id": 8,
+    "nome": "Serra Gaúcha Resort",
+    "cidade": "Gramado",
+    "estado": "RS",
+    "preco": 719.9,
+    "avaliacao": 9.4,
+    "imagem": "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=900",
+    "galeria": [
+      "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1200",
+      "https://images.unsplash.com/photo-1600566753051-f0b89df2dd90?w=1200",
+      "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=1200"
+    ],
+    "descricao": "Resort completo para famílias, com piscina aquecida, área de lazer e restaurante.",
+    "comodidades": [
+      "Piscina aquecida",
+      "Spa",
+      "Restaurante",
+      "Academia",
+      "Espaço infantil"
+    ],
+    "latitude": -29.3725,
+    "longitude": -50.8764
+  },
+  {
+    "id": 9,
+    "nome": "Pousada Jardim das Hortênsias",
+    "cidade": "Gramado",
+    "estado": "RS",
+    "preco": 329.9,
+    "avaliacao": 9.0,
+    "imagem": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=900",
+    "galeria": [
+      "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=1200",
+      "https://images.unsplash.com/photo-1591088398332-8a7791972843?w=1200",
+      "https://images.unsplash.com/photo-1615874694520-474822394e73?w=1200"
+    ],
+    "descricao": "Pousada charmosa próxima ao centro de Gramado, com jardim e café da manhã colonial.",
+    "comodidades": [
+      "Café da manhã",
+      "Wi-Fi gratuito",
+      "Jardim",
+      "Estacionamento",
+      "Aquecimento"
+    ],
+    "latitude": -29.3747,
+    "longitude": -50.8742
+  }
+]

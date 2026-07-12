@@ -1,99 +1,167 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import SearchBar from "../../components/common/SearchBar";
 import HotelCard from "../../components/hotel/HotelCard";
+
 import {
   buscarHoteis,
-  buscarLocal,
-} from "../../services/hotelService";
+  buscarMaisAvaliados,
+  buscarPromocoes,
+  type HotelLocal,
+} from "../../services/HotelServiceLocal";
+
 import "./Home.css";
 
 function Home() {
-  const [hotels, setHotels] = useState<any[]>([]);
+  const [hotels, setHotels] = useState<HotelLocal[]>([]);
+  const [maisAvaliados, setMaisAvaliados] = useState<
+    HotelLocal[]
+  >([]);
+  const [promocoes, setPromocoes] = useState<HotelLocal[]>(
+    []
+  );
+
   const [carregando, setCarregando] = useState(false);
   const [erro, setErro] = useState("");
-  const [cidadeAtual, setCidadeAtual] = useState("São Paulo");
+  const [cidadeAtual, setCidadeAtual] =
+    useState("São Paulo");
   const [checkinAtual, setCheckinAtual] = useState("");
   const [checkoutAtual, setCheckoutAtual] = useState("");
 
-  async function pesquisarCidade(
-  nomeCidade: string,
-  checkin: string,
-  checkout: string,
-   adultos: number,
-  criancas: number,
-  quartos: number
-) {
-  try {
-    setCarregando(true);
-    setErro("");
+  const carregouInicial = useRef(false);
 
-    const locais = await buscarLocal(nomeCidade);
-
-    const localEscolhido = locais.find(
-      (local: any) => local.dest_type === "city"
+  function formatarData(data: Date) {
+    const ano = data.getFullYear();
+    const mes = String(data.getMonth() + 1).padStart(
+      2,
+      "0"
     );
+    const dia = String(data.getDate()).padStart(2, "0");
 
-    if (!localEscolhido) {
-      setHotels([]);
-      setErro("Cidade não encontrada.");
-      return;
-    }
-
-    const dados = await buscarHoteis(
-      localEscolhido.dest_id,
-      localEscolhido.dest_type,
-      checkin,
-      checkout,
-       adultos,
-       criancas,
-       quartos
-    );
-
-    const resultados = Array.isArray(dados?.results)
-      ? dados.results
-      : [];
-
-    setHotels(resultados);
-
-    setCidadeAtual(
-      localEscolhido.city_name ||
-      localEscolhido.name ||
-      nomeCidade
-    );
-
-    setCheckinAtual(checkin);
-    setCheckoutAtual(checkout);
-
-    if (resultados.length === 0) {
-      setErro("Nenhum hotel foi encontrado.");
-    }
-  } catch (error) {
-    console.error("Erro ao pesquisar hotéis:", error);
-
-    setHotels([]);
-    setErro("Não foi possível carregar os hotéis.");
-  } finally {
-    setCarregando(false);
+    return `${ano}-${mes}-${dia}`;
   }
-}
 
-useEffect(() =>{
-  pesquisarCidade(
-    "São Paulo",
-    "2026-07-18",
-    "2026-07-20",
-    2,
-    0,
-    1
-  );
-}, []);
+  async function pesquisarCidade(
+    nomeCidade: string,
+    checkin: string,
+    checkout: string,
+    _adultos: number,
+    _criancas: number,
+    _quartos: number
+  ) {
+    try {
+      setCarregando(true);
+      setErro("");
+
+      const resultados = await buscarHoteis(nomeCidade);
+
+      setHotels(resultados);
+      setCidadeAtual(nomeCidade);
+      setCheckinAtual(checkin);
+      setCheckoutAtual(checkout);
+
+      if (resultados.length === 0) {
+        setErro(
+          `Nenhum hotel foi encontrado em ${nomeCidade}.`
+        );
+      }
+    } catch (error) {
+      console.error("Erro ao pesquisar hotéis:", error);
+
+      setHotels([]);
+      setErro("Não foi possível pesquisar os hotéis.");
+    } finally {
+      setCarregando(false);
+    }
+  }
+
+  useEffect(() => {
+    if (carregouInicial.current) return;
+
+    carregouInicial.current = true;
+
+    async function carregarPaginaInicial() {
+      try {
+        setCarregando(true);
+        setErro("");
+
+        const hoje = new Date();
+
+        const entrada = new Date(hoje);
+        entrada.setDate(entrada.getDate() + 1);
+
+        const saida = new Date(hoje);
+        saida.setDate(saida.getDate() + 2);
+
+        const checkinInicial = formatarData(entrada);
+        const checkoutInicial = formatarData(saida);
+
+        const [
+          hoteisSaoPaulo,
+          hoteisMaisAvaliados,
+          hoteisPromocao,
+        ] = await Promise.all([
+          buscarHoteis("São Paulo"),
+          buscarMaisAvaliados(),
+          buscarPromocoes(),
+        ]);
+
+        setHotels(hoteisSaoPaulo);
+        setMaisAvaliados(hoteisMaisAvaliados);
+        setPromocoes(hoteisPromocao);
+
+        setCidadeAtual("São Paulo");
+        setCheckinAtual(checkinInicial);
+        setCheckoutAtual(checkoutInicial);
+
+        if (hoteisSaoPaulo.length === 0) {
+          setErro(
+            "Nenhum hotel foi encontrado em São Paulo."
+          );
+        }
+      } catch (error) {
+        console.error(
+          "Erro ao carregar a página inicial:",
+          error
+        );
+
+        setErro(
+          "Não foi possível carregar os hotéis iniciais."
+        );
+      } finally {
+        setCarregando(false);
+      }
+    }
+
+    carregarPaginaInicial();
+  }, []);
+
+  function renderizarCard(hotel: HotelLocal) {
+    return (
+      <HotelCard
+        key={hotel.id}
+        id={hotel.id}
+        nome={hotel.nome}
+        cidade={`${hotel.cidade} - ${hotel.estado}`}
+        imagem={hotel.imagem}
+        avaliacao={hotel.avaliacao}
+        preco={hotel.preco}
+        checkin={checkinAtual}
+        checkout={checkoutAtual}
+      />
+    );
+  }
 
   return (
     <main>
       <section>
         <p>Olá!</p>
+
         <h1>Encontre sua próxima hospedagem.</h1>
-        <p>Compare os preços entre milhares de hotéis.</p>
+
+        <p>
+          Compare opções de hotéis para sua próxima
+          viagem.
+        </p>
 
         <SearchBar onBuscar={pesquisarCidade} />
       </section>
@@ -102,41 +170,34 @@ useEffect(() =>{
         <h3>Hotéis em {cidadeAtual}</h3>
 
         {carregando && <p>Carregando hotéis...</p>}
-        {erro && <p>{erro}</p>}
+
+        {!carregando && erro && <p>{erro}</p>}
+
+        {!carregando &&
+          !erro &&
+          hotels.length === 0 && (
+            <p>Nenhum hotel disponível.</p>
+          )}
 
         <div className="hotel-list">
-          {hotels
-            .filter((hotel) => hotel?.id)
-            .map((hotel) => (
-              <HotelCard
-                key={hotel.id}
-                id={hotel.id}
-                nome={hotel.name || "Hotel sem nome"}
-                cidade={
-                  hotel.wishlistName ||
-                  hotel.cityName ||
-                  cidadeAtual
-                }
-                imagem={hotel.photoMainUrl || ""}
-                avaliacao={hotel.reviewScore || 0}
-                preco={
-                  hotel.priceBreakdown?.grossPrice?.value || 0
-                }
-                checkin={checkinAtual}
-                checkout={checkoutAtual}
-              />
-            ))}
+          {hotels.map(renderizarCard)}
         </div>
       </section>
 
       <section>
-        <h3>Mais bem avaliados...</h3>
-        <div>...</div>
+        <h3>Mais bem avaliados</h3>
+
+        <div className="hotel-list">
+          {maisAvaliados.map(renderizarCard)}
+        </div>
       </section>
 
       <section>
-        <h3>Promoções...</h3>
-        <div>...</div>
+        <h3>Melhores preços</h3>
+
+        <div className="hotel-list">
+          {promocoes.map(renderizarCard)}
+        </div>
       </section>
     </main>
   );

@@ -1,0 +1,49 @@
+[
+  {
+    "id": 1,
+    "nome": "Hotel Fasano São Paulo",
+    "cidade": "São Paulo",
+    "estado": "SP",
+    "preco": 890,
+    "avaliacao": 9.5,
+    "imagem": "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800",
+    "galeria": [
+      "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800",
+      "https://images.unsplash.com/photo-1445019980597-93fa8acb246c?w=800",
+      "https://images.unsplash.com/photo-1522798514-97ceb8c4f1c8?w=800"
+    ],
+    "descricao": "Hotel cinco estrelas localizado na região da Avenida Paulista.",
+    "comodidades": [
+      "Wi-Fi",
+      "Piscina",
+      "Academia",
+      "Spa",
+      "Restaurante"
+    ],
+    "latitude": -23.5614,
+    "longitude": -46.6686
+  },
+  {
+    "id": 2,
+    "nome": "Blue Tree Premium",
+    "cidade": "São Paulo",
+    "estado": "SP",
+    "preco": 520,
+    "avaliacao": 8.9,
+    "imagem": "https://images.unsplash.com/photo-1582719508461-905c673771fd?w=800",
+    "galeria": [
+      "https://images.unsplash.com/photo-1582719508461-905c673771fd?w=800",
+      "https://images.unsplash.com/photo-1455587734955-081b22074882?w=800",
+      "https://images.unsplash.com/photo-1590490360182-c33d57733427?w=800"
+    ],
+    "descricao": "Hotel moderno próximo ao metrô e aos principais centros empresariais.",
+    "comodidades": [
+      "Wi-Fi",
+      "Academia",
+      "Piscina",
+      "Café da manhã"
+    ],
+    "latitude": -23.553,
+    "longitude": -46.639
+  }
+]

@@ -1,9 +1,9 @@
-import "./HotelCard.css";
 import { useNavigate } from "react-router-dom";
+import "./HotelCard.css";
 
 type HotelCardProps = {
-  nome: string;
   id: number;
+  nome: string;
   cidade: string;
   imagem: string;
   avaliacao: number;
@@ -25,43 +25,75 @@ function HotelCard({
   const navigate = useNavigate();
 
   function verDetalhes() {
-    const logado = localStorage.getItem("isLogged");
+    const estaLogado =
+      localStorage.getItem("isLogged") === "true";
 
-    if (logado !== "true") {
-      navigate("/.login");
+    if (!estaLogado) {
+      const paramsRetorno = new URLSearchParams();
+
+      paramsRetorno.set("redirect", `/hotel/${id}`);
+
+      if (checkin) {
+        paramsRetorno.set("checkin", checkin);
+      }
+
+      if (checkout) {
+        paramsRetorno.set("checkout", checkout);
+      }
+
+      navigate(`/login?${paramsRetorno.toString()}`);
       return;
     }
-      if (checkin && checkout) {
-        const params = new URLSearchParams({
-          checkin,
-          checkout,
-        });
-        navigate(`/hotel/${id}?${params.toString()}`);
-  } else {
-    navigate(`/hotel/${id}`);
+
+    const params = new URLSearchParams();
+
+    if (checkin) {
+      params.set("checkin", checkin);
+    }
+
+    if (checkout) {
+      params.set("checkout", checkout);
+    }
+
+    const query = params.toString();
+
+    navigate(
+      query
+        ? `/hotel/${id}?${query}`
+        : `/hotel/${id}`
+    );
   }
-      }
+
   return (
-    <div className="hotel-card">
-      <img src={imagem} alt={nome} />
+    <article className="hotel-card">
+      <img
+        src={imagem}
+        alt={nome}
+        className="hotel-card-image"
+      />
 
-      <h3>{nome}</h3>
+      <div className="hotel-card-content">
+        <h3>{nome}</h3>
 
-      <p>{cidade}</p>
+        <p>{cidade}</p>
 
-      <p>★ {avaliacao}</p>
+        <p>⭐ {avaliacao}</p>
 
-      <p>
-        R$ {Number(preco).toLocaleString("pt-BR", {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
-        })}
-      </p>
+        <strong>
+          {preco.toLocaleString("pt-BR", {
+            style: "currency",
+            currency: "BRL",
+          })}
+        </strong>
 
-      <button type="button" onClick={verDetalhes}>
-        Ver detalhes
-      </button>
-    </div>
+        <button
+          type="button"
+          onClick={verDetalhes}
+        >
+          Ver detalhes
+        </button>
+      </div>
+    </article>
   );
 }
 
