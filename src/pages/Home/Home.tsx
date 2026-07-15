@@ -13,17 +13,12 @@ import "./Home.css";
 
 function Home() {
   const [hotels, setHotels] = useState<HotelLocal[]>([]);
-  const [maisAvaliados, setMaisAvaliados] = useState<
-    HotelLocal[]
-  >([]);
-  const [promocoes, setPromocoes] = useState<HotelLocal[]>(
-    []
-  );
+  const [maisAvaliados, setMaisAvaliados] = useState<HotelLocal[]>([]);
+  const [promocoes, setPromocoes] = useState<HotelLocal[]>([]);
 
   const [carregando, setCarregando] = useState(false);
   const [erro, setErro] = useState("");
-  const [cidadeAtual, setCidadeAtual] =
-    useState("São Paulo");
+  const [cidadeAtual, setCidadeAtual] = useState("São Paulo");
   const [checkinAtual, setCheckinAtual] = useState("");
   const [checkoutAtual, setCheckoutAtual] = useState("");
 
@@ -31,10 +26,7 @@ function Home() {
 
   function formatarData(data: Date) {
     const ano = data.getFullYear();
-    const mes = String(data.getMonth() + 1).padStart(
-      2,
-      "0"
-    );
+    const mes = String(data.getMonth() + 1).padStart(2, "0");
     const dia = String(data.getDate()).padStart(2, "0");
 
     return `${ano}-${mes}-${dia}`;
@@ -52,16 +44,25 @@ function Home() {
       setCarregando(true);
       setErro("");
 
-      const resultados = await buscarHoteis(nomeCidade);
+      const cidadePesquisada = nomeCidade.trim();
+      const resultados = await buscarHoteis(cidadePesquisada);
+      localStorage.setItem("lastSearch", cidadePesquisada);
 
       setHotels(resultados);
-      setCidadeAtual(nomeCidade);
+
+      setCidadeAtual(
+        resultados.length > 0
+          ? resultados[0].cidade
+          : cidadePesquisada
+
+      );
+
       setCheckinAtual(checkin);
       setCheckoutAtual(checkout);
 
       if (resultados.length === 0) {
         setErro(
-          `Nenhum hotel foi encontrado em ${nomeCidade}.`
+          `Nenhum hotel foi encontrado em ${cidadePesquisada}.`
         );
       }
     } catch (error) {
@@ -114,19 +115,12 @@ function Home() {
         setCheckoutAtual(checkoutInicial);
 
         if (hoteisSaoPaulo.length === 0) {
-          setErro(
-            "Nenhum hotel foi encontrado em São Paulo."
-          );
+          setErro("Nenhum hotel foi encontrado em São Paulo.");
         }
       } catch (error) {
-        console.error(
-          "Erro ao carregar a página inicial:",
-          error
-        );
+        console.error("Erro ao carregar a página inicial:", error);
 
-        setErro(
-          "Não foi possível carregar os hotéis iniciais."
-        );
+        setErro("Não foi possível carregar os hotéis iniciais.");
       } finally {
         setCarregando(false);
       }
@@ -156,18 +150,11 @@ function Home() {
       <section className="home-hero">
         <div className="home-hero-overlay">
           <div className="home-hero-content">
-            <span className="home-eyebrow">
-              Sua próxima viagem começa aqui
-            </span>
-
-            <h1>
-              Encontre hospedagens para viver momentos
-              inesquecíveis.
-            </h1>
+            <h1>Achou. Gostou. Reservou.</h1>
 
             <p>
-              Pesquise destinos, compare opções e encontre
-              o lugar ideal para sua próxima viagem.
+              Compare hotéis, descubra o lugar ideal e planeje sua
+              próxima viagem com praticidade.
             </p>
 
             <div className="home-search-wrapper">
@@ -186,11 +173,6 @@ function Home() {
 
             <h2>Hotéis em {cidadeAtual}</h2>
           </div>
-
-          <p>
-            Confira opções de hospedagem para as datas
-            escolhidas.
-          </p>
         </div>
 
         {carregando && (
@@ -205,13 +187,11 @@ function Home() {
           </div>
         )}
 
-        {!carregando &&
-          !erro &&
-          hotels.length === 0 && (
-            <div className="home-status">
-              Nenhum hotel disponível.
-            </div>
-          )}
+        {!carregando && !erro && hotels.length === 0 && (
+          <div className="home-status">
+            Nenhum hotel disponível.
+          </div>
+        )}
 
         <div className="hotel-list">
           {hotels.map(renderizarCard)}
@@ -263,8 +243,10 @@ function Home() {
       <section className="home-benefits">
         <article>
           <span>🔍</span>
+
           <div>
             <h3>Busca simples</h3>
+
             <p>
               Encontre hotéis por cidade de forma rápida.
             </p>
@@ -273,8 +255,10 @@ function Home() {
 
         <article>
           <span>❤️</span>
+
           <div>
             <h3>Salve seus favoritos</h3>
+
             <p>
               Guarde as hospedagens que mais chamaram sua
               atenção.
@@ -284,8 +268,10 @@ function Home() {
 
         <article>
           <span>🗺️</span>
+
           <div>
             <h3>Veja a localização</h3>
+
             <p>
               Confira cada hospedagem diretamente no mapa.
             </p>

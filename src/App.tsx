@@ -5,6 +5,7 @@ import Login from "./pages/Login/login";
 import Cadastro from "./pages/Cadastro/cadastro";
 import Favoritos from "./pages/Favoritos/favoritos";
 import HotelDetails from "./pages/HotelDetails/HotelDetails";
+import Perfil from "./pages/Perfil/Perfil";
 
 
 function App(){
@@ -18,6 +19,7 @@ function App(){
       <Route path="/cadastro" element={<Cadastro />} />
       <Route path="/favoritos" element={<Favoritos />} />
       <Route path="/hotel/:id" element={<HotelDetails />} />
+      <Route path="/perfil" element={<Perfil />} />
     </Routes>
 </>
 );
