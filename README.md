@@ -13,7 +13,7 @@ Este projeto foi desenvolvido como parte do meu portfólio em Desenvolvimento Fr
 
 ---
 
-## ✨ Funcionalidades
+## Funcionalidades
 
 - 🔍 Pesquisa de hotéis por cidade
 - 🏨 Visualização de detalhes da hospedagem
@@ -63,7 +63,7 @@ src
 Clone o repositório:
 
 ```bash
-git clone https://github.com/SEU-USUARIO/acho.git
+git clone https://github.com/RayssaZsilva/acho.git
 ```
 
 Entre na pasta:
@@ -86,7 +86,7 @@ npm run dev
 
 ---
 
-## 💾 Persistência de dados
+## Persistência de dados
 
 O projeto utiliza **LocalStorage** para armazenar:
 
@@ -114,7 +114,7 @@ O projeto utiliza **LocalStorage** para armazenar:
 - [x] LocalStorage
 - [x] Responsividade
 
-### 🔜 Versão 2.0
+### 🔜 Versão 2.0 em andamento
 
 - [ ] API de hotéis
 - [ ] Comparador de preços
@@ -130,11 +130,9 @@ O projeto utiliza **LocalStorage** para armazenar:
 
 **Rayssa Cardoso**
 
-Estudante de Ciência da Computação, apaixonada por tecnologia e desenvolvimento de software.
+Estudante de Ciência da Computação.
 
-- GitHub: https://github.com/SEU-USUARIO
-- LinkedIn: https://linkedin.com/in/SEU-LINK
-
+- GitHub: https://github.com/RayssaZsilva
 ---
 
 ## 📄 Licença
